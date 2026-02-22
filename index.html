@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ملاذك الآمن 🌸</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body id="body-bg" class="theme-default">
+
+    <div id="lofi-radio" class="hidden-element">
+        <div class="radio-card glass-panel">
+            <span class="radio-icon">🎧</span>
+            <select id="music-select" onchange="changeMusic()">
+                <option value="rain">صوت المطر 🌧️</option>
+                <option value="piano">بيانو هادي 🎹</option>
+                <option value="lofi">موسيقى Lo-Fi 📻</option>
+            </select>
+            <button class="play-btn" onclick="toggleRadio()">▶</button>
+        </div>
+        <audio id="radio-audio" loop><source id="audio-src" src="https://files.catbox.moe/rain.mp3" type="audio/mpeg"></audio>
+    </div>
+
+    <main id="app-wrapper">
+
+        <section id="screen-name" class="app-screen active">
+            <div class="content-box glass-panel text-center">
+                <div class="flower-icon pulse-soft">🌸</div>
+                <h1 class="elegant-title">أهلاً بيكي في مساحتك</h1>
+                <p class="subtitle mb-20">عشان أقدر أساعدك، تحبي أناديكي بإيه؟</p>
+                <input type="text" id="user-name-input" class="beautiful-input" placeholder="اكتبي اسمك هنا 🤍">
+                <button class="soft-btn mt-20" onclick="saveName()">ابدأي الرحلة ✨</button>
+            </div>
+        </section>
+
+        <section id="screen-mood" class="app-screen hidden-next">
+            <div class="content-box glass-panel text-center">
+                <h2 class="section-title" id="greeting-text"></h2>
+                <p class="subtitle mb-20">حاسة بإيه النهاردة؟</p>
+                <div class="mood-grid">
+                    <button class="mood-btn" onclick="setMood('sad', 'مخنوقة 😔', 'theme-blue')">مخنوقة وزعلانة 😔</button>
+                    <button class="mood-btn" onclick="setMood('anxious', 'متوترة 😥', 'theme-purple')">متوترة وقلقانة 😥</button>
+                    <button class="mood-btn" onclick="setMood('okay', 'محتاجة أطمن 🤍', 'theme-pink')">محتاجة أطمن بس 🤍</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-hub" class="app-screen hidden-next">
+            <div class="hub-container">
+                <div class="glass-panel text-center mb-20">
+                    <h2 class="section-title" id="hub-greeting"></h2>
+                    <div class="live-typing-area"><p id="mood-response"></p><span class="cursor">|</span></div>
+                </div>
+                <div class="options-grid">
+                    <button class="soft-btn" onclick="goTo('screen-letgo')">صندوق التخلص من الزعل 🔥</button>
+                    <button class="soft-btn mt-15" onclick="goTo('screen-chat')">فضفضي معايا 💬</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-letgo" class="app-screen hidden-next">
+            <div class="letgo-box glass-panel text-center">
+                <button class="back-btn-abs" onclick="goTo('screen-hub')">↩️</button>
+                <h2 class="section-title">صندوق التخلص من الزعل 🦋</h2>
+                <p class="subtitle mb-20">اكتبي كل حاجة وجعاكي هنا، ومحدش هيقراها غيرك..</p>
+                <textarea id="burn-textarea" class="beautiful-textarea" placeholder="فرغي كل طاقتك السلبية هنا..."></textarea>
+                <button id="burn-btn" class="soft-btn mt-20" onclick="burnText()">اتخلصي من الزعل ✨</button>
+                <p id="burn-msg" class="success-msg hidden-element"></p>
+            </div>
+        </section>
+
+        <section id="screen-chat" class="app-screen hidden-next">
+            <div class="chat-box glass-panel">
+                <div class="chat-header">
+                    <h3 id="chat-header-title"></h3>
+                    <button class="back-btn" onclick="goTo('screen-hub')">رجوع ↩️</button>
+                </div>
+                <div class="chat-history" id="chat-history"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="اكتبي اللي حاسة بيه..." onkeypress="handleEnter(event)">
+                    <button class="send-btn" onclick="sendMessage()">إرسال 📩</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
