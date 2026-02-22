@@ -3,45 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة ذكرياتنا ✨</title>
+    <title>خزنة ذكرياتنا | V3</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-glow pink-glow"></div>
-    <div class="bg-glow purple-glow"></div>
+    <div class="bg-glow"></div>
 
-    <section id="lock-screen" class="glass-panel active-screen">
-        <div class="heart-beat">🖤</div>
-        <h1>ممنوع الدخول إلا لحنين</h1>
-        <p>عشان نتأكد إنك إنتي، اكتبي الباسورد..</p>
-        <input type="password" id="password-input" placeholder="الباسورد السري ✨">
-        <button class="btn-primary mt-15" onclick="checkPassword()">فتح الخزنة</button>
-        <p id="pass-error" class="error-msg"></p>
+    <section id="lock-screen" class="full-page">
+        <div class="glass-card">
+            <div class="heart-beat">🖤</div>
+            <h1>منطقة محميّة</h1>
+            <p>اكتبي الرمز السري يا حنين ✨</p>
+            <input type="password" id="password-input" placeholder="0000">
+            <button class="btn-main" onclick="unlockSite()">فتح الخزنة</button>
+            <p id="pass-error" class="error-text"></p>
+        </div>
     </section>
 
-    <section id="main-app" class="glass-panel hidden-screen">
-        <header class="app-header">
-            <h2>خزنة الذكريات 🔐</h2>
-            <button class="icon-btn" onclick="resetGame()">🔄</button>
-        </header>
-
-        <div class="memories-gallery" id="memories-gallery">
-            <p class="empty-msg" id="gallery-empty">جاوبي على الأسئلة عشان الذكريات تظهر هنا ✨</p>
-        </div>
-
-        <div class="ai-host-area">
-            <div class="ai-avatar">يوسف 🧑🏻‍💻</div>
-            <div class="live-text-box">
-                <p id="ai-text"></p><span class="cursor">|</span>
+    <main id="story-content" class="hidden-site">
+        
+        <section class="story-section fade-in">
+            <div class="glass-card">
+                <h2 class="neon-text">بداية الحكاية.. 🌸</h2>
+                <p class="narrative-text">من سنتين، بدأت حكاية مكنتش أعرف إنها هتكون أجمل حاجة في حياتي.. كل يوم بيعدي وأنا معاكي بحس إني ملكت الدنيا.</p>
             </div>
-        </div>
+        </section>
 
-        <div class="input-area mt-15">
-            <input type="text" id="answer-input" placeholder="ردي عليه هنا..." onkeypress="handleEnter(event)" disabled>
-            <button class="btn-send" id="send-btn" onclick="sendAnswer()" disabled>إرسال</button>
-        </div>
-    </section>
+        <section class="story-section">
+            <div class="ai-interaction-card glass-card">
+                <div class="ai-badge">يوسف بيكلمك 🧑🏻‍💻</div>
+                <div class="ai-text-box">
+                    <p id="ai-q1"></p>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans1" placeholder="ردي هنا..">
+                    <button onclick="checkAI(1)">إرسال</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery-section" class="story-section locked">
+            <div class="glass-card">
+                <h2 class="neon-text">لحظات لا تُنسى 📸</h2>
+                <div class="horizontal-scroll">
+                    <img src="https://files.catbox.moe/w2e9j8.jpg" alt="ذكرى 1">
+                    <img src="https://files.catbox.moe/5m9v3d.jpg" alt="ذكرى 2">
+                </div>
+                <p class="sub-text">دي كانت أول مرة نضحك فيها من قلبنا..</p>
+            </div>
+        </section>
+
+        <section id="final-section" class="story-section locked">
+            <div class="glass-card">
+                <h2 class="neon-text">كلمة من قلبي.. ❤️</h2>
+                <p class="narrative-text">شكراً إنك في حياتي، وشكراً على كل ثانية بتخليها أحلى. 2026 هتكون سنة العوض لينا يا حنين. ✨</p>
+            </div>
+        </section>
+
+    </main>
 
     <script src="script.js"></script>
 </body>
