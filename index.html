@@ -2,68 +2,60 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>اختبار الرومانسية المطلق ✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senpai's Romance Test 🏮</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <video autoplay muted loop id="anime-bg">
-        <source src="https://files.catbox.moe/s6y48g.mp4" type="video/mp4">
-    </video>
-    <div class="overlay"></div>
+    <div class="dark-overlay"></div>
+    <div class="anime-background"></div>
 
-    <main class="container">
-        <section class="stage active-stage" id="stage-1">
-            <div class="content-box giant-box fade-in">
-                <h1 class="neon-title glitch">اختبار الرومانسية</h1>
-                <p class="subtitle">هل انتي بطلة أنمي رومانسية.. ولا مجرد شخصية جانبية؟ 🤔</p>
-                <button class="btn-cyber" onclick="nextStage(2)">ابدأ التحدي 🚀</button>
+    <section id="lock-screen" class="full-page">
+        <div class="terminal-box">
+            <div class="terminal-header">AUTHENTICATION REQUIRED</div>
+            <div class="terminal-body">
+                <p class="typing-demo">> جاري فحص النظام...</p>
+                <p class="typing-demo">> ادخلي الرمز السري للولوج لعقل السينباي:</p>
+                <div class="input-wrapper">
+                    <span class="prompt">$</span>
+                    <input type="password" id="password-input" autofocus>
+                </div>
+                <button class="btn-neon" onclick="checkGate()">اتصال ⚡</button>
+                <p id="error-msg" class="error-text"></p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="stage hidden-stage" id="stage-2">
-            <div class="content-box giant-box">
-                <div class="anime-char">👾 سينباي (الحكيم)</div>
-                <h2 class="scenario-title">السيناريو الأول: الاعتراف</h2>
-                <p class="scenario-text">"شخص معجب بيكي بقاله فترة، وجه فجأة قدام الكل وقال: أنا بحبك! .. هتعملي إيه؟"</p>
+    <main id="app" class="hidden">
+        <div class="game-container">
+            <div class="header-status">
+                <span class="blink-dot"></span> SYSTEM ACTIVE: SENPAI_MODE_V4
+            </div>
+
+            <div id="content-area" class="glass-card main-card">
+                <div class="senpai-header">
+                    <div class="avatar">👾</div>
+                    <div class="name">سينباي (الحكيم)</div>
+                </div>
                 
-                <div class="ai-response-area">
-                    <p id="ai-reply-2" class="typing-text"></p>
+                <div class="text-display">
+                    <p id="main-text" class="live-text"></p>
                 </div>
 
-                <div class="input-cyber">
-                    <input type="text" id="ans-2" placeholder="اكتبي تصرفك هنا..">
-                    <button onclick="submitToAI(2, 'الاعتراف المفاجئ')">إرسال</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="stage hidden-stage" id="stage-3">
-            <div class="content-box giant-box">
-                <div class="anime-char" style="background: var(--neon-blue);">👾 سينباي</div>
-                <h2 class="scenario-title" style="color: var(--neon-blue);">السيناريو الثاني: الخناقة</h2>
-                <p class="scenario-text">"حبيبك اتأخر عليكي ساعتين في ميعاد مهم جداً.. لما وصل، هتقوليله إيه؟ (وريني لشراسة!)"</p>
-                
-                <div class="ai-response-area">
-                    <p id="ai-reply-3" class="typing-text"></p>
-                </div>
-
-                <div class="input-cyber blue-theme">
-                    <input type="text" id="ans-3" placeholder="اكتبي رد فعلك..">
-                    <button onclick="submitToAI(3, 'التأخير عن الموعد')">إرسال</button>
+                <div id="result-display" class="hidden">
+                    <img id="final-anime-img" src="" class="result-img">
+                    <h2 id="final-title" class="neon-pink"></h2>
                 </div>
             </div>
-        </section>
 
-        <section class="stage hidden-stage" id="stage-final">
-            <div class="content-box giant-box text-center">
-                <h1 class="neon-title">النتيجة النهائية ✨</h1>
-                <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzh5b2Z5eXF5eXF5eXF5eXF5eXF5eXF5eXF5eXF5eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UQP2h8Q7g37hI1J5yP/giphy.gif" class="anime-result-img">
-                <p class="final-verdict" id="final-score">جاري تحليل مستوى رومانسيتك...</p>
+            <div class="control-panel glass-card">
+                <div class="input-row">
+                    <input type="text" id="user-input" placeholder="اكتبي ردك هنا..." onkeypress="handleKey(event)">
+                    <button id="send-btn" onclick="processStep()">إرسال</button>
+                </div>
             </div>
-        </section>
-
+        </div>
     </main>
 
     <script src="script.js"></script>
