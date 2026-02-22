@@ -1,65 +1,60 @@
-const CORRECT_PASS = "2026";
-let conversationHistory = []; // ذاكرة الجلسة
+const ACCESS_CODE = "2026";
+let conversation = [];
 
-function checkGate() {
-    if (document.getElementById('password-input').value === CORRECT_PASS) {
+function startSystem() {
+    if (document.getElementById('pass-input').value === ACCESS_CODE) {
         document.getElementById('lock-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        startEngine();
+        wakeUpSenpai();
     } else {
-        document.getElementById('error-msg').innerText = "الرمز السري غير صحيح.. تم رفض الدخول.";
+        document.getElementById('error-msg').innerText = "تم رفض الوصول.. الرمز غير صحيح.";
     }
 }
 
-async function startEngine() {
-    typeLive("أهلاً بكي في اختبار الرومانسية.. أنا سينباي، سأختبر اليوم مدى جودة مشاعرك. هل أنتي جاهزة لبدء الاختبار أم ستنسحبين الآن؟");
+async function wakeUpSenpai() {
+    typeWriter("أهلاً بكِ في نظام 'السينباي' المتطور.. أنا هنا لأختبر عمق مشاعرك بذكاء. لا تتوقعي أسئلة سهلة، ولا تتوقعي رقة مفرطة. هل نبدأ الاختبار أم ستبكين الآن؟ 👾");
 }
 
-function handleKey(e) { if(e.key === 'Enter') processStep(); }
+function handleKey(e) { if(e.key === 'Enter') sendToSenpai(); }
 
-async function processStep() {
-    const inputField = document.getElementById('user-input');
-    const userText = inputField.value.trim();
-    if (!userText) return;
+async function sendToSenpai() {
+    const input = document.getElementById('user-input');
+    const msg = input.value.trim();
+    if (!msg) return;
 
-    inputField.value = "";
-    inputField.disabled = true;
-    document.getElementById('main-text').innerText = "سينباي يحلل كلماتك... 👾";
+    input.value = "";
+    input.disabled = true;
+    document.getElementById('ai-text').innerText = "جاري تحليل الرد المتواضع... ⚙️";
 
     try {
-        const response = await fetch('/api/chat', {
+        const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                userText: userText, 
-                history: conversationHistory 
-            })
+            body: JSON.stringify({ message: msg, history: conversation })
         });
-        const data = await response.json();
+        const data = await res.json();
         
-        // تحديث الذاكرة
-        conversationHistory.push({ role: "user", content: userText });
-        conversationHistory.push({ role: "assistant", content: data.reply });
+        conversation.push({ role: "user", text: msg });
+        conversation.push({ role: "model", text: data.reply });
 
-        // التحقق من انتهاء الاختبار
         if (data.isFinished) {
-            handleFinalResult(data.reply, data.rating);
+            showFinalVerdict(data.reply, data.verdictType);
         } else {
-            typeLive(data.reply, () => { inputField.disabled = false; inputField.focus(); });
+            typeWriter(data.reply, () => { input.disabled = false; input.focus(); });
         }
     } catch (e) {
-        typeLive("حدث خلل في مصفوفة البيانات.. قولي مرة أخرى.");
-        inputField.disabled = false;
+        typeWriter("حدث خطأ في مصفوفة البيانات.. حاولي مجدداً.");
+        input.disabled = false;
     }
 }
 
-function typeLive(text, callback) {
-    let box = document.getElementById('main-text');
-    box.innerText = "";
+function typeWriter(text, callback) {
+    let el = document.getElementById('ai-text');
+    el.innerText = "";
     let i = 0;
     function t() {
         if (i < text.length) {
-            box.innerText += text.charAt(i);
+            el.innerText += text.charAt(i);
             i++;
             setTimeout(t, 35);
         } else if (callback) callback();
@@ -67,13 +62,16 @@ function typeLive(text, callback) {
     t();
 }
 
-function handleFinalResult(verdict, rating) {
-    document.getElementById('main-text').innerText = verdict;
-    document.getElementById('result-display').classList.remove('hidden');
-    document.getElementById('final-title').innerText = `تقييمك النهائي: ${rating}`;
+function showFinalVerdict(text, type) {
+    document.getElementById('ai-text').innerText = text;
+    document.getElementById('final-verdict').classList.remove('hidden');
+    document.getElementById('result-title').innerText = `اللقب النهائي: ${type}`;
     
-    // جلب صورة أنمي عشوائية بناءً على التقييم
-    const imgUrl = rating.includes("يائسة") ? "https://files.catbox.moe/mzhwlv.jpg" : "https://files.catbox.moe/6v7f5n.jpg";
-    document.getElementById('final-anime-img').src = imgUrl;
-    document.querySelector('.control-panel').style.display = 'none';
+    // صورة ميمز أنمي بناءً على اللقب
+    const isBaka = type.includes("باكا") || type.includes("يائسة");
+    document.getElementById('result-img').src = isBaka 
+        ? "https://media.giphy.com/media/UQP2h8Q7g37hI1J5yP/giphy.gif" 
+        : "https://media.giphy.com/media/L95W4wv8nnb9K/giphy.gif";
+        
+    document.querySelector('.control-center').style.display = 'none';
 }
