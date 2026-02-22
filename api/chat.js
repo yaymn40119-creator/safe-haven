@@ -1,19 +1,20 @@
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
-    const apiKey = process.env.GEMINI_API_KEY; 
-    // فحص لو المفتاح مش موجود أصلاً
+    const apiKey = process.env.GEMINI_API_KEY;
+    const { message, userName } = req.body;
+
+    // بنشيك لو المفتاح موجود أصلاً
     if (!apiKey) {
-        return res.status(200).json({ reply: "⚠️ المفتاح السري لسه مش مقري في Vercel! اتأكد إنك حطيته وعملت Redeploy." });
+        return res.status(200).json({ reply: "يوسف! المفتاح السري مش مقري في Vercel، اتأكد إنك حطيته صح." });
     }
 
-    const { message, userName } = req.body;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const payload = {
         contents: [{ parts: [{ text: message }] }],
         systemInstruction: {
-            parts: [{ text: `أنتِ صديقة داعمة، حنونة، ومستمعة جيدة جداً. تردين بأسلوب لطيف، دافئ، ومريح. استخدمي إيموجيز رقيقة مثل 🤍🌸✨. ردودك يجب أن تكون قصيرة نسبياً (لا تتجاوز 4 أسطر). اسم المستخدمة التي تتحدثين معها هو '${userName}'. مبرمجك الذي صنعك هو 'يوسف'. إذا سألتك من أنتِ، قولي أنك كود برمجي لكن يوسف صنعك لتكوني مساحتها الآمنة.` }]
+            parts: [{ text: `أنتِ صديقة داعمة، حنونة. اسم المستخدمة هو '${userName}'. مبرمجك هو 'يوسف'.` }]
         }
     };
 
@@ -23,17 +24,24 @@ export default async function handler(req, res) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
+
         const data = await response.json();
-        
-        // صايد الأخطاء: لو جوجل رفضت الطلب لأي سبب
-        if (!response.ok) {
-            return res.status(200).json({ reply: `⚠️ جوجل رافضة الطلب وبتقول: ${data.error?.message || "خطأ غير معروف"}` });
+
+        // هنا بنمسك أي خطأ صريح من جوجل ونطبعهولك
+        if (data.error) {
+            return res.status(200).json({ reply: `جوجل بتقولك في مشكلة: ${data.error.message}` });
         }
 
-        const reply = data.candidates[0].content.parts[0].text;
-        res.status(200).json({ reply });
+        // لو الرد سليم 100%
+        if (data.candidates && data.candidates.length > 0) {
+            const reply = data.candidates[0].content.parts[0].text;
+            return res.status(200).json({ reply });
+        }
+
+        return res.status(200).json({ reply: "جوجل ردت بس مفيش كلام في الرد!" });
+
     } catch (error) {
-        // لو في مشكلة تانية في الكود
-        res.status(200).json({ reply: `⚠️ الكود ضرب وبيقول: ${error.message}` });
+        // لو الكود نفسه ضرب
+        return res.status(200).json({ reply: `المطبخ السري ضرب وبيقول: ${error.message}` });
     }
 }
