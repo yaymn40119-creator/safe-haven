@@ -3,51 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة ذكرياتنا ✨</title>
+    <title>اختبار الرومانسية المطلق ✨</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <audio id="bg-music" loop><source src="https://files.catbox.moe/rain.mp3" type="audio/mpeg"></audio>
+    <video autoplay muted loop id="anime-bg">
+        <source src="https://files.catbox.moe/s6y48g.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
 
-    <section id="lock-screen" class="full-page">
-        <div class="glass-card fade-in">
-            <div class="heart-pulse">🖤</div>
-            <h1 class="neon-text">منطقة مخصصة لحنين</h1>
-            <p>اكتبي كلمة السر لفتح عالمنا السري..</p>
-            <input type="password" id="password-input" placeholder="0000">
-            <button class="btn-glow" onclick="unlockExperience()">فتح الخزنة ✨</button>
-            <p id="pass-error" class="error-msg"></p>
-        </div>
-    </section>
-
-    <main id="story-content" class="hidden">
-        
-        <div class="story-section glass-card">
-            <h2 class="neon-pink">البداية كانت معاكي.. 🌸</h2>
-            <p class="story-text">كل ثانية عدت علينا كانت حكاية، وكل ضحكة منك كانت بتبني جوايا عالم جديد.</p>
-        </div>
-
-        <div class="story-section ai-card glass-card">
-            <div class="ai-badge">يوسف بيكلمك 🧑🏻‍💻</div>
-            <div class="ai-chat-box">
-                <p id="ai-text"></p>
+    <main class="container">
+        <section class="stage active-stage" id="stage-1">
+            <div class="content-box giant-box fade-in">
+                <h1 class="neon-title glitch">اختبار الرومانسية</h1>
+                <p class="subtitle">هل انتي بطلة أنمي رومانسية.. ولا مجرد شخصية جانبية؟ 🤔</p>
+                <button class="btn-cyber" onclick="nextStage(2)">ابدأ التحدي 🚀</button>
             </div>
-            <div class="input-row">
-                <input type="text" id="ans-input" placeholder="ردي هنا.." disabled>
-                <button id="send-btn" onclick="checkAnswer()" disabled>إرسال</button>
-            </div>
-        </div>
+        </section>
 
-        <div id="gallery-section" class="story-section locked glass-card">
-            <h2 class="neon-pink">لحظاتنا الحلوة 📸</h2>
-            <div class="photo-grid">
-                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=500" class="love-img">
-                <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=500" class="love-img">
+        <section class="stage hidden-stage" id="stage-2">
+            <div class="content-box giant-box">
+                <div class="anime-char">👾 سينباي (الحكيم)</div>
+                <h2 class="scenario-title">السيناريو الأول: الاعتراف</h2>
+                <p class="scenario-text">"شخص معجب بيكي بقاله فترة، وجه فجأة قدام الكل وقال: أنا بحبك! .. هتعملي إيه؟"</p>
+                
+                <div class="ai-response-area">
+                    <p id="ai-reply-2" class="typing-text"></p>
+                </div>
+
+                <div class="input-cyber">
+                    <input type="text" id="ans-2" placeholder="اكتبي تصرفك هنا..">
+                    <button onclick="submitToAI(2, 'الاعتراف المفاجئ')">إرسال</button>
+                </div>
             </div>
-            <p class="story-text">دي كانت مجرد بداية لأيام أجمل جاية لينا في 2026..</p>
-        </div>
+        </section>
+
+        <section class="stage hidden-stage" id="stage-3">
+            <div class="content-box giant-box">
+                <div class="anime-char" style="background: var(--neon-blue);">👾 سينباي</div>
+                <h2 class="scenario-title" style="color: var(--neon-blue);">السيناريو الثاني: الخناقة</h2>
+                <p class="scenario-text">"حبيبك اتأخر عليكي ساعتين في ميعاد مهم جداً.. لما وصل، هتقوليله إيه؟ (وريني لشراسة!)"</p>
+                
+                <div class="ai-response-area">
+                    <p id="ai-reply-3" class="typing-text"></p>
+                </div>
+
+                <div class="input-cyber blue-theme">
+                    <input type="text" id="ans-3" placeholder="اكتبي رد فعلك..">
+                    <button onclick="submitToAI(3, 'التأخير عن الموعد')">إرسال</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="stage hidden-stage" id="stage-final">
+            <div class="content-box giant-box text-center">
+                <h1 class="neon-title">النتيجة النهائية ✨</h1>
+                <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzh5b2Z5eXF5eXF5eXF5eXF5eXF5eXF5eXF5eXF5eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UQP2h8Q7g37hI1J5yP/giphy.gif" class="anime-result-img">
+                <p class="final-verdict" id="final-score">جاري تحليل مستوى رومانسيتك...</p>
+            </div>
+        </section>
 
     </main>
 
