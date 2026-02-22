@@ -1,146 +1,160 @@
-let userName = "";
+// باسورد الدخول للموقع
+const CORRECT_PASS = "2026"; 
 
-// سحر اللمس
-document.addEventListener('touchmove', createDust);
-document.addEventListener('mousemove', createDust);
-
-function createDust(e) {
-    let x = e.touches ? e.touches[0].clientX : e.clientX;
-    let y = e.touches ? e.touches[0].clientY : e.clientY;
-    let dust = document.createElement('div');
-    dust.className = 'magic-dust';
-    dust.style.left = x + 'px'; dust.style.top = y + 'px';
-    document.body.appendChild(dust);
-    setTimeout(() => dust.remove(), 1000); 
-}
-
-// التنقل والاسم
-function goTo(screenId) {
-    document.querySelectorAll('.app-screen').forEach(s => { s.classList.remove('active'); s.classList.add('hidden-next'); });
-    document.getElementById(screenId).classList.remove('hidden-next');
-    document.getElementById(screenId).classList.add('active');
-}
-
-function saveName() {
-    let input = document.getElementById('user-name-input').value.trim();
-    if(input === "") { alert("اكتبي اسمك الأول عشان نتعرف 🤍"); return; }
-    userName = input;
-    document.getElementById('greeting-text').innerText = `أهلاً بيكي يا ${userName} ✨`;
-    document.getElementById('lofi-radio').classList.remove('hidden-element');
-    goTo('screen-mood');
-}
-
-// تغيير المود
-function setMood(mood, moodText, themeClass) {
-    document.getElementById('body-bg').className = themeClass;
-    document.getElementById('hub-greeting').innerText = `أنا معاكي يا ${userName} 🤍`;
-    document.getElementById('chat-header-title').innerText = `فضفضي يا ${userName}.. أنا سامعك`;
-    goTo('screen-hub');
-
-    let msg = "";
-    if(mood === 'sad') msg = `عارف إنك "${moodText}"، وإن الدنيا ممكن تكون جاية عليكي حبتين يا ${userName}. بس أنا هنا عشان أسمعك وأشيل عنك.. خدي نفس عميق وكل حاجة هتتعدل.`;
-    else if(mood === 'anxious') msg = `التفكير الكتير متعب، وعارف إنك "${moodText}". بس إنتِ قوية وعديتي بالأصعب يا ${userName}.. حطي همومك هنا وافصلي شوية.`;
-    else msg = `إنتِ في مكانك الآمن يا ${userName}.. مساحة معمولة مخصوص عشان تدلعك وتسمعك من غير أي أحكام. ✨`;
-
-    document.getElementById('mood-response').innerHTML = "";
-    let iIdx = 0;
-    function typeMood() {
-        if(iIdx < msg.length) {
-            document.getElementById('mood-response').innerHTML += msg.charAt(iIdx);
-            iIdx++; setTimeout(typeMood, 40);
-        }
+// الأسئلة والأجوبة التجريبية (تقدر تغيرها براحتك بعدين)
+const GAME_LEVELS = [
+    { 
+        question: "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فكرا ولا نسيتي؟ 🙂", 
+        answer: "سنتين", 
+        memoryImage: "https://files.catbox.moe/w2e9j8.jpg" // لينك صورة عشوائية تظهر لما تجاوب صح
+    },
+    { 
+        question: "ماشي يا ستي طلعتي شاطرة في الأولى.. طب إيه أكتر حاجة أنا بحبها فيكي؟", 
+        answer: "ضحكتي", 
+        memoryImage: "https://files.catbox.moe/5m9v3d.jpg"
+    },
+    { 
+        question: "طب سؤال أخير بقى عشان نقفل الخزنة.. أنا بحبك قد إيه؟", 
+        answer: "قد الدنيا", 
+        memoryImage: "https://files.catbox.moe/q9a8z7.jpg"
     }
-    setTimeout(typeMood, 500);
-}
+];
 
-// صندوق حرق الزعل
-function burnText() {
-    let textarea = document.getElementById('burn-textarea');
-    let btn = document.getElementById('burn-btn');
-    let msg = document.getElementById('burn-msg');
-    
-    if(textarea.value.trim() === "") return;
-    textarea.disabled = true; btn.classList.add('hidden-element'); textarea.classList.add('burn-animation');
-
-    setTimeout(() => {
-        textarea.value = ""; textarea.classList.remove('burn-animation'); textarea.disabled = false;
-        msg.innerText = `تم تبخير كل الطاقة السلبية يا ${userName}! إنتِ أقوى من أي زعل 🦋✨`;
-        msg.classList.remove('hidden-element');
-        setTimeout(() => { msg.classList.add('hidden-element'); btn.classList.remove('hidden-element'); }, 4000);
-    }, 2000);
-}
-
-// الشات المتصل بالذكاء الاصطناعي 🧠
-function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+let currentLevel = localStorage.getItem('havenLevel') ? parseInt(localStorage.getItem('havenLevel')) : 0;
+let isUnlocked = localStorage.getItem('havenUnlocked') === 'true';
 
 window.onload = () => {
-    let history = document.getElementById('chat-history');
-    history.innerHTML = `<div class="bot-msg">أهلاً بيكي.. المكان هنا سرك ومحدش هيحكم عليكي. إيه اللي مزعلك النهاردة؟</div>`;
+    if (isUnlocked) {
+        unlockUI();
+    }
+};
+
+function checkPassword() {
+    let pass = document.getElementById('password-input').value;
+    if (pass === CORRECT_PASS) {
+        localStorage.setItem('havenUnlocked', 'true');
+        unlockUI();
+    } else {
+        document.getElementById('pass-error').innerText = "الباسورد غلط يا حنين، ركزي! 🙂";
+    }
 }
 
-async function sendMessage() {
-    let inputField = document.getElementById('chat-input');
-    let text = inputField.value.trim();
-    if(!text) return;
-    
-    let history = document.getElementById('chat-history');
-    let userDiv = document.createElement('div');
-    userDiv.className = 'user-msg'; userDiv.innerText = text;
-    history.appendChild(userDiv);
-    inputField.value = ""; history.scrollTop = history.scrollHeight;
-    inputField.disabled = true;
+function unlockUI() {
+    document.getElementById('lock-screen').classList.replace('active-screen', 'hidden-screen');
+    document.getElementById('main-app').classList.replace('hidden-screen', 'active-screen');
+    loadMemories();
+    askCurrentQuestion();
+}
 
-    let typingDiv = document.createElement('div');
-    typingDiv.className = 'bot-msg'; typingDiv.innerText = "بيكتب...";
-    history.appendChild(typingDiv); history.scrollTop = history.scrollHeight;
+// تحميل الذكريات اللي كسبتها قبل كده
+function loadMemories() {
+    let gallery = document.getElementById('memories-gallery');
+    if (currentLevel > 0) {
+        document.getElementById('gallery-empty').style.display = 'none';
+        gallery.innerHTML = '';
+        for (let i = 0; i < currentLevel; i++) {
+            if(GAME_LEVELS[i]) {
+                gallery.innerHTML += `<img src="${GAME_LEVELS[i].memoryImage}" class="memory-img">`;
+            }
+        }
+    }
+}
+
+// الذكاء الاصطناعي بيكتب السؤال
+function askCurrentQuestion() {
+    if (currentLevel >= GAME_LEVELS.length) {
+        typeLiveText("كده إنتي نجحتي في كل الاختبارات وفتحتيلك كل الذكريات.. بحبك يا حنين 🤍✨");
+        return;
+    }
+    let qText = GAME_LEVELS[currentLevel].question;
+    typeLiveText(qText);
+}
+
+function handleEnter(e) { if (e.key === 'Enter' && !document.getElementById('send-btn').disabled) sendAnswer(); }
+
+async function sendAnswer() {
+    let inputField = document.getElementById('answer-input');
+    let btn = document.getElementById('send-btn');
+    let answerText = inputField.value.trim();
+    if (!answerText) return;
+
+    inputField.value = "";
+    inputField.disabled = true;
+    btn.disabled = true;
+    
+    // يوسف (الذكاء الاصطناعي) بيفكر في الرد
+    document.getElementById('ai-text').innerText = "بيشوف الإجابة...";
+
+    let levelData = GAME_LEVELS[currentLevel];
 
     try {
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text, userName: userName })
+            body: JSON.stringify({ 
+                userAnswer: answerText, 
+                correctAnswer: levelData.answer,
+                question: levelData.question
+            })
         });
         const data = await response.json();
-        history.removeChild(typingDiv);
-        showBotReply(data.reply);
-    } catch (error) {
-        history.removeChild(typingDiv);
-        showBotReply("في مشكلة في الاتصال يا " + userName + "، خدي نفس عميق وجربي تاني 🤍");
+        let aiReply = data.reply;
+
+        // بنشوف لو الذكاء الاصطناعي اقتنع إن الإجابة صح (بيبعت كلمة [صح] في أخر كلامه)
+        if (aiReply.includes("[صح]")) {
+            aiReply = aiReply.replace("[صح]", "").trim(); // بنشيل الكلمة السرية عشان متظهرش
+            currentLevel++;
+            localStorage.setItem('havenLevel', currentLevel);
+            loadMemories();
+            typeLiveText(aiReply, () => {
+                setTimeout(askCurrentQuestion, 3000); // يسأل السؤال اللي بعده بعد 3 ثواني
+            });
+        } else {
+            // لو جاوبت غلط، هيكتبلها الرد المستفز ويرجع يفتح الإدخال تاني
+            typeLiveText(aiReply, () => {
+                inputField.disabled = false;
+                btn.disabled = false;
+                inputField.focus();
+            });
+        }
+
+    } catch (e) {
+        typeLiveText("النت علق للحظة.. قولي تاني كده؟", () => {
+            inputField.disabled = false;
+            btn.disabled = false;
+        });
     }
 }
 
-function showBotReply(responseText) {
-    let history = document.getElementById('chat-history');
-    let botDiv = document.createElement('div'); 
-    botDiv.className = 'bot-msg'; 
-    history.appendChild(botDiv);
-    
-    let charIdx = 0;
-    function typeReply() {
-        if(charIdx < responseText.length) {
-            botDiv.innerHTML += responseText.charAt(charIdx); charIdx++;
-            history.scrollTop = history.scrollHeight; setTimeout(typeReply, 30);
+// سحر الـ Live Typing المطور
+function typeLiveText(text, callback) {
+    let box = document.getElementById('ai-text');
+    box.innerText = "";
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            box.innerText += text.charAt(i);
+            i++;
+            setTimeout(type, 30); // سرعة الكتابة
         } else {
-            document.getElementById('chat-input').disabled = false;
-            document.getElementById('chat-input').focus();
+            let inputField = document.getElementById('answer-input');
+            let btn = document.getElementById('send-btn');
+            // لو لسه في أسئلة، يفتح الإدخال لحنين
+            if(currentLevel < GAME_LEVELS.length) {
+                inputField.disabled = false;
+                btn.disabled = false;
+                inputField.focus();
+            }
+            if(callback) callback();
         }
     }
-    typeReply();
+    type();
 }
 
-// الراديو
-let audio = document.getElementById('radio-audio');
-let playing = false;
-function toggleRadio() {
-    if(playing) { audio.pause(); document.querySelector('.play-btn').innerText = "▶"; } 
-    else { audio.play().catch(e => {}); document.querySelector('.play-btn').innerText = "⏸"; }
-    playing = !playing;
-}
-function changeMusic() {
-    let val = document.getElementById('music-select').value;
-    let src = document.getElementById('audio-src');
-    if(val === 'rain') src.src = "https://files.catbox.moe/rain.mp3"; 
-    else if(val === 'piano') src.src = "https://files.catbox.moe/piano.mp3";
-    else src.src = "https://files.catbox.moe/lofi.mp3";
-    audio.load(); if(playing) audio.play();
+function resetGame() {
+    if(confirm('عايز تصفر الخزنة وترجعها من الصفر؟ (عشان تجرب إنت)')) {
+        localStorage.removeItem('havenLevel');
+        localStorage.removeItem('havenUnlocked');
+        location.reload();
+    }
 }
