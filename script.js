@@ -1,112 +1,66 @@
-const CORRECT_PASS = "2026"; 
+const API_URL = "/api/chat";
+const CORRECT_PASS = "2026";
 
-const GAME_LEVELS = [
-    { 
-        question: "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فاكرة ولا نسيتي؟ 🙂", 
-        answer: "سنتين", 
-        memoryImage: "https://files.catbox.moe/w2e9j8.jpg" 
-    },
-    { 
-        question: "ماشي يا ستي طلعتي شاطرة.. طب إيه أكتر حاجة أنا بحبها فيكي؟ ركزي 🙂", 
-        answer: "ضحكتي", 
-        memoryImage: "https://files.catbox.moe/5m9v3d.jpg"
-    }
-];
-
-let currentLevel = localStorage.getItem('havenLevel') ? parseInt(localStorage.getItem('havenLevel')) : 0;
-let isUnlocked = localStorage.getItem('havenUnlocked') === 'true';
-
-window.onload = () => { if (isUnlocked) unlockUI(); };
-
-function checkPassword() {
+function unlockSite() {
     let pass = document.getElementById('password-input').value;
     if (pass === CORRECT_PASS) {
-        localStorage.setItem('havenUnlocked', 'true');
-        unlockUI();
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('story-content').style.display = 'block';
+        window.scrollTo(0, 0);
+        startAI();
     } else {
-        document.getElementById('pass-error').innerText = "الباسورد غلط يا حنين.. ركزي! 🙂";
+        document.getElementById('pass-error').innerText = "الباسورد غلط.. ركزي 🙂";
     }
 }
 
-function unlockUI() {
-    document.getElementById('lock-screen').classList.replace('active-screen', 'hidden-screen');
-    document.getElementById('main-app').classList.replace('hidden-screen', 'active-screen');
-    loadMemories();
-    askCurrentQuestion();
+function startAI() {
+    typeText("ai-q1", "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فاكرة ولا كالعادة نسيتي؟ 🙂");
 }
 
-function loadMemories() {
-    let gallery = document.getElementById('memories-gallery');
-    if (currentLevel > 0) {
-        document.getElementById('gallery-empty').style.display = 'none';
-        gallery.innerHTML = '';
-        for (let i = 0; i < currentLevel; i++) {
-            if(GAME_LEVELS[i]) gallery.innerHTML += `<img src="${GAME_LEVELS[i].memoryImage}" class="memory-img">`;
-        }
-    }
-}
+async function checkAI(level) {
+    let input = document.getElementById('ans1');
+    let text = input.value.trim();
+    if (!text) return;
 
-function askCurrentQuestion() {
-    if (currentLevel >= GAME_LEVELS.length) {
-        typeLiveText("خلصتي كل الأسئلة يا شطورة.. مفيش ذكريات تانية دلوقتي، بس أنا دايماً جنبك 🤍✨");
-        return;
-    }
-    typeLiveText(GAME_LEVELS[currentLevel].question);
-}
-
-function handleEnter(e) { if (e.key === 'Enter' && !document.getElementById('send-btn').disabled) sendAnswer(); }
-
-async function sendAnswer() {
-    let inputField = document.getElementById('answer-input');
-    let answerText = inputField.value.trim();
-    if (!answerText) return;
-
-    inputField.value = "";
-    inputField.disabled = true;
-    document.getElementById('send-btn').disabled = true;
-    document.getElementById('ai-text').innerText = "بيشوف الإجابة...";
-
-    let levelData = GAME_LEVELS[currentLevel];
+    input.disabled = true;
+    document.getElementById('ai-q1').innerText = "بيشوف الهبد بتاعك...";
 
     try {
-        const response = await fetch('/api/chat', {
+        const res = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userAnswer: answerText, correctAnswer: levelData.answer, question: levelData.question })
+            body: JSON.stringify({ 
+                userAnswer: text, 
+                correctAnswer: "سنتين", 
+                question: "إمتى اتعرفنا؟" 
+            })
         });
-        const data = await response.json();
-        let aiReply = data.reply;
+        const data = await res.json();
+        let reply = data.reply;
 
-        if (aiReply.includes("[صح]")) {
-            aiReply = aiReply.replace("[صح]", "").trim();
-            currentLevel++;
-            localStorage.setItem('havenLevel', currentLevel);
-            typeLiveText(aiReply, () => { setTimeout(askCurrentQuestion, 3000); loadMemories(); });
+        if (reply.includes("[صح]")) {
+            typeText("ai-q1", reply.replace("[صح]", "") + " ✨.. كملي انزلي لتحت شوفي المفاجأة.");
+            document.getElementById('gallery-section').classList.remove('locked');
+            document.getElementById('final-section').classList.remove('locked');
         } else {
-            typeLiveText(aiReply, () => { 
-                inputField.disabled = false; 
-                document.getElementById('send-btn').disabled = false; 
-                inputField.focus(); 
-            });
+            typeText("ai-q1", reply, () => { input.disabled = false; input.focus(); });
         }
     } catch (e) {
-        typeLiveText("النت علق للحظة.. قولي تاني كده؟ 🙂", () => { inputField.disabled = false; });
+        typeText("ai-q1", "في مشكلة في النت.. قولي تاني؟ 🙂");
+        input.disabled = false;
     }
 }
 
-function typeLiveText(text, callback) {
-    let box = document.getElementById('ai-text');
-    box.innerText = "";
+function typeText(id, text, callback) {
+    let el = document.getElementById(id);
+    el.innerText = "";
     let i = 0;
-    function type() {
+    function t() {
         if (i < text.length) {
-            box.innerText += text.charAt(i);
+            el.innerText += text.charAt(i);
             i++;
-            let speed = text.charAt(i-1) === '.' ? 350 : 35;
-            setTimeout(type, speed);
-        } else if(callback) callback();
+            setTimeout(t, 40);
+        } else if (callback) callback();
     }
-    type();
+    t();
 }
-
-function resetGame() { if(confirm('تصفير الخزنة؟')) { localStorage.clear(); location.reload(); } }
