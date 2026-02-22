@@ -2,60 +2,53 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senpai's Romance Test 🏮</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Infinite Senpai 🌊</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dark-overlay"></div>
-    <div class="anime-background"></div>
+    <div class="liquid-bg">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
 
-    <section id="lock-screen" class="full-page">
-        <div class="terminal-box">
-            <div class="terminal-header">AUTHENTICATION REQUIRED</div>
-            <div class="terminal-body">
-                <p class="typing-demo">> جاري فحص النظام...</p>
-                <p class="typing-demo">> ادخلي الرمز السري للولوج لعقل السينباي:</p>
-                <div class="input-wrapper">
-                    <span class="prompt">$</span>
-                    <input type="password" id="password-input" autofocus>
-                </div>
-                <button class="btn-neon" onclick="checkGate()">اتصال ⚡</button>
-                <p id="error-msg" class="error-text"></p>
+    <main class="main-wrapper">
+        <section id="lock-screen" class="glass-morph active-screen">
+            <div class="cyber-icon">🔐</div>
+            <h1 class="glitch-text">AUTHENTICATION</h1>
+            <p>أدخل شفرة الولوج لعالم السينباي..</p>
+            <div class="input-glow-wrapper">
+                <input type="password" id="pass-input" placeholder="••••">
             </div>
-        </div>
-    </section>
+            <button class="btn-liquid" onclick="startSystem()">دخول النظام ⚡</button>
+            <p id="error-msg" class="error-glow"></p>
+        </section>
 
-    <main id="app" class="hidden">
-        <div class="game-container">
-            <div class="header-status">
-                <span class="blink-dot"></span> SYSTEM ACTIVE: SENPAI_MODE_V4
+        <section id="app" class="hidden">
+            <div class="header-nav">
+                <div class="system-tag">STATUS: <span class="online">ACTIVE</span></div>
+                <div class="senpai-label">👾 SENPAI_CORE_V5</div>
             </div>
 
-            <div id="content-area" class="glass-card main-card">
-                <div class="senpai-header">
-                    <div class="avatar">👾</div>
-                    <div class="name">سينباي (الحكيم)</div>
-                </div>
-                
-                <div class="text-display">
-                    <p id="main-text" class="live-text"></p>
-                </div>
-
-                <div id="result-display" class="hidden">
-                    <img id="final-anime-img" src="" class="result-img">
-                    <h2 id="final-title" class="neon-pink"></h2>
+            <div class="display-box glass-morph">
+                <div class="text-container">
+                    <p id="ai-text" class="live-flow-text"></p>
+                    <div id="final-verdict" class="hidden">
+                        <img id="result-img" src="" alt="Result">
+                        <h2 id="result-title"></h2>
+                    </div>
                 </div>
             </div>
 
-            <div class="control-panel glass-card">
+            <div class="control-center glass-morph">
                 <div class="input-row">
-                    <input type="text" id="user-input" placeholder="اكتبي ردك هنا..." onkeypress="handleKey(event)">
-                    <button id="send-btn" onclick="processStep()">إرسال</button>
+                    <input type="text" id="user-input" placeholder="اكتبي ردك هنا، وريني شطارتك..." onkeypress="handleKey(event)">
+                    <button class="send-btn" onclick="sendToSenpai()">إرسال 📩</button>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
     <script src="script.js"></script>
