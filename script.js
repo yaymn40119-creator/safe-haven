@@ -1,57 +1,56 @@
-const API_URL = "/api/chat";
 const CORRECT_PASS = "2026";
 
-function unlockSite() {
+function unlockExperience() {
     let pass = document.getElementById('password-input').value;
     if (pass === CORRECT_PASS) {
-        document.getElementById('lock-screen').style.display = 'none';
-        document.getElementById('story-content').style.display = 'block';
-        window.scrollTo(0, 0);
-        startAI();
+        document.getElementById('lock-screen').classList.add('hidden');
+        document.getElementById('story-content').classList.remove('hidden');
+        document.getElementById('bg-music').play().catch(()=>{}); // تشغيل المزيكا
+        startStoryAI();
     } else {
-        document.getElementById('pass-error').innerText = "الباسورد غلط.. ركزي 🙂";
+        document.getElementById('pass-error').innerText = "الباسورد غلط.. ركزي يا حنين 🙂";
     }
 }
 
-function startAI() {
-    typeText("ai-q1", "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فاكرة ولا كالعادة نسيتي؟ 🙂");
+function startStoryAI() {
+    typeLive("ai-text", "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فاكرة ولا كالعادة نسيتي؟ 🙂");
 }
 
-async function checkAI(level) {
-    let input = document.getElementById('ans1');
+async function checkAnswer() {
+    let input = document.getElementById('ans-input');
     let text = input.value.trim();
     if (!text) return;
 
     input.disabled = true;
-    document.getElementById('ai-q1').innerText = "بيشوف الهبد بتاعك...";
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('ai-text').innerText = "بيشوف الهبد بتاعك...";
 
     try {
-        const res = await fetch(API_URL, {
+        const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                userAnswer: text, 
-                correctAnswer: "سنتين", 
-                question: "إمتى اتعرفنا؟" 
-            })
+            body: JSON.stringify({ userAnswer: text, correctAnswer: "سنتين", question: "إمتى اتعرفنا؟" })
         });
         const data = await res.json();
         let reply = data.reply;
 
         if (reply.includes("[صح]")) {
-            typeText("ai-q1", reply.replace("[صح]", "") + " ✨.. كملي انزلي لتحت شوفي المفاجأة.");
-            document.getElementById('gallery-section').classList.remove('locked');
-            document.getElementById('final-section').classList.remove('locked');
+            typeLive("ai-text", reply.replace("[صح]", "") + " ✨.. انزلي شوفي الصور اللي فتحتلك!", () => {
+                document.getElementById('gallery-section').classList.remove('locked');
+            });
         } else {
-            typeText("ai-q1", reply, () => { input.disabled = false; input.focus(); });
+            typeLive("ai-text", reply, () => { 
+                input.disabled = false; 
+                document.getElementById('send-btn').disabled = false;
+                input.focus();
+            });
         }
     } catch (e) {
-        typeText("ai-q1", "في مشكلة في النت.. قولي تاني؟ 🙂");
-        input.disabled = false;
+        typeLive("ai-text", "النت علق للحظة.. قولي تاني؟ 🙂", () => { input.disabled = false; });
     }
 }
 
-function typeText(id, text, callback) {
+function typeLive(id, text, callback) {
     let el = document.getElementById(id);
     el.innerText = "";
     let i = 0;
@@ -60,7 +59,11 @@ function typeText(id, text, callback) {
             el.innerText += text.charAt(i);
             i++;
             setTimeout(t, 40);
-        } else if (callback) callback();
+        } else {
+            document.getElementById('ans-input').disabled = false;
+            document.getElementById('send-btn').disabled = false;
+            if (callback) callback();
+        }
     }
     t();
 }
