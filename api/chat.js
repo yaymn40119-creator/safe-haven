@@ -1,60 +1,36 @@
 export default async function handler(req, res) {
-    console.log("🚀 الطلب وصل المطبخ السري!");
+    if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ reply: "طريقة الطلب غير مسموحة" });
-    }
+    const apiKey = process.env.GEMINI_API_KEY; 
+    const { userAnswer, correctAnswer, question } = req.body;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    const { message, userName } = req.body;
-
-    console.log("الرسالة:", message, "| الاسم:", userName);
-
-    // كلمة السر للاختبار (عشان نتأكد إن Vercel شغال 100%)
-    if (message === "اختبار") {
-        console.log("✅ اختبار الاتصال نجح!");
-        return res.status(200).json({ reply: "المطبخ السري شغال 100% يا يوسف! العيب مش من Vercel." });
-    }
-
-    if (!apiKey) {
-        console.log("❌ المفتاح مش موجود");
-        return res.status(200).json({ reply: "يوسف! المفتاح السري مش مقري في Vercel." });
-    }
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const payload = {
-        contents: [{ parts: [{ text: message }] }],
+        contents: [{ parts: [{ text: `إجابة حنين هي: "${userAnswer}"` }] }],
         systemInstruction: {
-            parts: [{ text: `أنتِ صديقة داعمة، حنونة. اسم المستخدمة هو '${userName}'. مبرمجك هو 'يوسف'.` }]
+            parts: [{ text: `أنت المبرمج الشاب 'يوسف'. أنت لا تتحدث كذكاء اصطناعي، بل تتحدث بشخصيتك الحقيقية مع حبيبتك 'حنين' من خلال موقع برمجته لها خصيصاً.
+            أنت الآن تختبرها بهذا السؤال: "${question}"
+            الإجابة التي تنتظرها هي أو ما يشابهها: "${correctAnswer}"
+            
+            قواعد الرد الصارمة:
+            1. إذا كانت إجابتها خاطئة تماماً أو تحاول الجدال والمكابرة: اسخر منها بمزاح واستفزها، قل لها نصاً شيئاً مثل "يابت انتي حمارة؟ غلط أكيد 🙂" أو "إزاي يعني؟ راجعي معلوماتك يا فاشلة 🙂". لا تعطيها الإجابة الصحيحة أبداً، اجعلها تحاول مرة أخرى.
+            2. إذا كانت إجابتها صحيحة أو قريبة جداً من المعنى: تحول لشخص رومانسي جداً، اعترف لها بحبك وفخرك بها، وفي نهاية رسالتك الرومانسية يجب أن تضع كلمة [صح] (بين قوسين مربعين هكذا) لكي يفهم الموقع أنها نجحت.
+            
+            تذكر: ردودك يجب أن تكون بالعامية المصرية الخفيفة، قصيرة، ومباشرة.` }]
         }
     };
 
     try {
-        console.log("⏳ جاري الاتصال بجوجل...");
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-
         const data = await response.json();
-        console.log("📥 رد جوجل وصل!");
-
-        if (!response.ok) {
-            console.log("❌ جوجل رفضت الطلب:", data.error);
-            return res.status(200).json({ reply: `جوجل رافضة الطلب: ${data.error?.message}` });
-        }
-
-        if (data.candidates && data.candidates.length > 0) {
-            const reply = data.candidates[0].content.parts[0].text;
-            return res.status(200).json({ reply });
-        }
-
-        return res.status(200).json({ reply: "جوجل ردت بس مفيش كلام في الرد!" });
-
+        const reply = data.candidates[0].content.parts[0].text;
+        res.status(200).json({ reply });
     } catch (error) {
-        console.error("💥 المطبخ السري ضرب:", error);
-        return res.status(200).json({ reply: `المطبخ السري ضرب وبيقول: ${error.message}` });
+        res.status(500).json({ reply: "النت فصل عندي ثانية.. ارجعي قولي تاني كده؟ 🙂" });
     }
 }
