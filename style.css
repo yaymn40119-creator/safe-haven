@@ -1,51 +1,50 @@
 :root {
-    --neon: #00f3ff;
-    --pink: #ff0055;
-    --bg-dark: #050507;
-    --glass: rgba(15, 15, 20, 0.9);
+    --black: #050508;
+    --neon-blue: #00f3ff;
+    --neon-pink: #ff0055;
+    --text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-body { background: var(--bg-dark); color: #fff; height: 100vh; overflow: hidden; direction: rtl; }
+body { background: var(--black); color: #fff; height: 100vh; overflow: hidden; direction: rtl; }
 
-/* خلفية أنمي مظلمة */
-.anime-background {
-    position: fixed; width: 100%; height: 100%; z-index: -2;
-    background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1500') center/cover no-repeat;
-    filter: brightness(0.3) contrast(1.2);
+/* الخلفية المائية (Mesh Gradient Animation) */
+.liquid-bg { position: fixed; width: 100%; height: 100%; z-index: -1; background: #050508; overflow: hidden; }
+.blob { 
+    position: absolute; width: 500px; height: 500px; background: linear-gradient(45deg, #1a0a2a, #0a1a2a); 
+    filter: blur(80px); border-radius: 50%; animation: move 20s infinite alternate; opacity: 0.6;
 }
-.dark-overlay { position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, transparent, #000); z-index: -1; }
+.blob:nth-child(2) { background: #2a0a1a; left: 50%; top: 20%; animation-delay: -5s; }
+.blob:nth-child(3) { background: #0a2a2a; right: 10%; bottom: 10%; animation-delay: -10s; }
+@keyframes move { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(100px, 100px) rotate(360deg); } }
 
-.full-page { height: 100vh; display: flex; justify-content: center; align-items: center; }
+/* الواجهات المريحة */
+.main-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; padding: 25px; }
+.glass-morph { 
+    background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(30px); 
+    border: 1px solid rgba(255,255,255,0.05); border-radius: 40px;
+    padding: 50px 35px; width: 100%; max-width: 650px; 
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8); transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* حل نهائي لمشكلة اللزق */
+.live-flow-text { 
+    font-size: 22px; line-height: 2.5; /* مسافة عملاقة بين السطور */
+    color: #efefef; font-weight: 700; text-align: right;
+    min-height: 200px; margin-bottom: 30px;
+}
+
+.input-row { display: flex; gap: 15px; margin-top: 20px; }
+#user-input { 
+    flex: 1; padding: 22px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-blue); 
+    border-radius: 20px; color: #fff; font-size: 18px; outline: none; transition: 0.3s;
+}
+#user-input:focus { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+
+.send-btn { 
+    padding: 0 40px; background: var(--neon-blue); color: #000; 
+    border: none; border-radius: 20px; font-weight: 900; cursor: pointer; transition: 0.3s;
+}
+
 .hidden { display: none !important; }
-
-/* ستايل التيرمينال (الباسورد) */
-.terminal-box { background: #000; border: 1px solid var(--neon); padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 20px var(--neon); }
-.terminal-header { border-bottom: 1px solid var(--neon); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; color: var(--neon); }
-.input-wrapper { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
-#password-input { background: none; border: none; color: var(--neon); font-size: 20px; outline: none; width: 100%; }
-
-/* حل مشكلة لزق الكلام وتنسيق الشاشة الرئيسية */
-.game-container { max-width: 600px; margin: auto; height: 100vh; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
-.glass-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(15px); }
-.main-card { flex: 1; padding: 40px 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
-
-.senpai-header { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-.avatar { font-size: 40px; }
-.name { font-weight: 900; color: var(--pink); text-shadow: 0 0 10px var(--pink); }
-
-/* نصوص مرتاحة جداً وغير ملتصقة */
-.live-text { font-size: 20px; line-height: 2; /* المسافة بين السطور */ color: #ddd; font-weight: 700; white-space: pre-wrap; }
-
-/* منطقة النتيجة */
-.result-img { width: 100%; border-radius: 15px; margin-top: 20px; border: 2px solid var(--neon); }
-.neon-pink { color: var(--pink); text-shadow: 0 0 15px var(--pink); text-align: center; margin-top: 20px; font-size: 24px; }
-
-/* التحكم */
-.control-panel { padding: 20px; }
-.input-row { display: flex; gap: 10px; }
-#user-input { flex: 1; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon); border-radius: 15px; color: #fff; outline: none; }
-#send-btn { padding: 0 30px; background: var(--neon); border: none; border-radius: 15px; color: #000; font-weight: 900; cursor: pointer; transition: 0.3s; }
-#send-btn:hover { box-shadow: 0 0 15px var(--neon); }
-
-.error-text { color: var(--pink); margin-top: 10px; font-size: 14px; }
+.error-glow { color: var(--neon-pink); margin-top: 15px; font-size: 14px; text-shadow: 0 0 10px var(--neon-pink); }
