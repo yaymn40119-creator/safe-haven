@@ -1,59 +1,51 @@
 :root {
-    --bg: #0a0015;
-    --neon-pink: #ff2e63;
-    --neon-blue: #08d9d6;
-    --text: #eaeaea;
-    --box-bg: rgba(20, 10, 30, 0.85);
+    --neon: #00f3ff;
+    --pink: #ff0055;
+    --bg-dark: #050507;
+    --glass: rgba(15, 15, 20, 0.9);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-body { background: var(--bg); color: var(--text); overflow: hidden; direction: rtl; height: 100vh; }
+body { background: var(--bg-dark); color: #fff; height: 100vh; overflow: hidden; direction: rtl; }
 
-/* خلفية الفيديو */
-#anime-bg { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -2; filter: brightness(0.6); object-fit: cover; }
-.overlay { position: fixed; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(10,0,20,0.7), rgba(40,0,60,0.3)); z-index: -1; }
-
-/* المراحل العملاقة */
-.container { height: 100vh; width: 100vw; }
-.stage { height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; transition: all 1s ease-in-out; }
-.active-stage { opacity: 1; transform: translateY(0); z-index: 10; }
-.hidden-stage { opacity: 0; transform: translateY(100vh); z-index: 0; pointer-events: none; }
-
-/* الصناديق العملاقة وتنسيق الكلام */
-.giant-box {
-    background: var(--box-bg); backdrop-filter: blur(25px); border: 2px solid var(--neon-pink);
-    border-radius: 40px; padding: 60px 40px; /* مسافات ضخمة */
-    width: 90%; max-width: 600px; text-align: center;
-    box-shadow: 0 0 40px rgba(255, 46, 99, 0.3), inset 0 0 20px rgba(255, 46, 99, 0.1);
+/* خلفية أنمي مظلمة */
+.anime-background {
+    position: fixed; width: 100%; height: 100%; z-index: -2;
+    background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1500') center/cover no-repeat;
+    filter: brightness(0.3) contrast(1.2);
 }
+.dark-overlay { position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, transparent, #000); z-index: -1; }
 
-.neon-title { font-size: 3em; color: var(--neon-pink); text-shadow: 0 0 20px var(--neon-pink); margin-bottom: 30px; text-transform: uppercase; }
-.subtitle { font-size: 1.5em; line-height: 2; margin-bottom: 50px; color: #ccc; }
+.full-page { height: 100vh; display: flex; justify-content: center; align-items: center; }
+.hidden { display: none !important; }
 
-/* عناصر السيناريو */
-.anime-char { display: inline-block; background: var(--neon-pink); color: #fff; padding: 10px 30px; border-radius: 50px; font-weight: 900; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(255,46,99,0.4); }
-.scenario-title { color: var(--neon-pink); font-size: 2em; margin-bottom: 25px; }
-.scenario-text { font-size: 1.6em; line-height: 2.5; /* حل مشكلة اللزق */ margin-bottom: 40px; color: #fff; font-weight: bold; }
+/* ستايل التيرمينال (الباسورد) */
+.terminal-box { background: #000; border: 1px solid var(--neon); padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 20px var(--neon); }
+.terminal-header { border-bottom: 1px solid var(--neon); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; color: var(--neon); }
+.input-wrapper { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+#password-input { background: none; border: none; color: var(--neon); font-size: 20px; outline: none; width: 100%; }
 
-.ai-response-area { min-height: 120px; margin-bottom: 30px; padding: 20px; border-right: 4px solid var(--neon-pink); text-align: right; background: rgba(255, 46, 99, 0.05); }
-.typing-text { font-size: 1.4em; line-height: 2; color: var(--neon-blue); font-weight: bold; }
+/* حل مشكلة لزق الكلام وتنسيق الشاشة الرئيسية */
+.game-container { max-width: 600px; margin: auto; height: 100vh; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+.glass-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(15px); }
+.main-card { flex: 1; padding: 40px 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
 
-/* الأزرار والإدخال السايبر */
-.btn-cyber { background: transparent; border: 3px solid var(--neon-pink); color: var(--neon-pink); padding: 20px 50px; font-size: 1.5em; font-weight: 900; cursor: pointer; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
-.btn-cyber:hover { background: var(--neon-pink); color: white; box-shadow: 0 0 30px var(--neon-pink); }
+.senpai-header { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+.avatar { font-size: 40px; }
+.name { font-weight: 900; color: var(--pink); text-shadow: 0 0 10px var(--pink); }
 
-.input-cyber { display: flex; gap: 15px; }
-.input-cyber input { flex: 1; padding: 20px; background: rgba(0,0,0,0.6); border: 2px solid var(--neon-pink); color: white; font-size: 1.2em; outline: none; border-radius: 15px; }
-.input-cyber button { background: var(--neon-pink); color: white; border: none; padding: 0 30px; font-weight: 900; cursor: pointer; border-radius: 15px; font-size: 1.2em; transition: 0.3s; }
-.input-cyber button:hover { box-shadow: 0 0 20px var(--neon-pink); }
+/* نصوص مرتاحة جداً وغير ملتصقة */
+.live-text { font-size: 20px; line-height: 2; /* المسافة بين السطور */ color: #ddd; font-weight: 700; white-space: pre-wrap; }
 
-/* ثيم أزرق للمرحلة التانية */
-.blue-theme input, .blue-theme button { border-color: var(--neon-blue); }
-.blue-theme button { background: var(--neon-blue); }
-.blue-theme button:hover { box-shadow: 0 0 20px var(--neon-blue); }
+/* منطقة النتيجة */
+.result-img { width: 100%; border-radius: 15px; margin-top: 20px; border: 2px solid var(--neon); }
+.neon-pink { color: var(--pink); text-shadow: 0 0 15px var(--pink); text-align: center; margin-top: 20px; font-size: 24px; }
 
-.anime-result-img { width: 100%; max-width: 300px; border-radius: 20px; border: 3px solid var(--neon-blue); margin-bottom: 30px; }
-.final-verdict { font-size: 1.8em; color: var(--neon-blue); line-height: 2; }
+/* التحكم */
+.control-panel { padding: 20px; }
+.input-row { display: flex; gap: 10px; }
+#user-input { flex: 1; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon); border-radius: 15px; color: #fff; outline: none; }
+#send-btn { padding: 0 30px; background: var(--neon); border: none; border-radius: 15px; color: #000; font-weight: 900; cursor: pointer; transition: 0.3s; }
+#send-btn:hover { box-shadow: 0 0 15px var(--neon); }
 
-.fade-in { animation: fadeIn 1.5s ease-in-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+.error-text { color: var(--pink); margin-top: 10px; font-size: 14px; }
