@@ -3,63 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة ذكرياتنا | V3</title>
+    <title>خزنة ذكرياتنا ✨</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="bg-glow"></div>
+    <audio id="bg-music" loop><source src="https://files.catbox.moe/rain.mp3" type="audio/mpeg"></audio>
 
     <section id="lock-screen" class="full-page">
-        <div class="glass-card">
-            <div class="heart-beat">🖤</div>
-            <h1>منطقة محميّة</h1>
-            <p>اكتبي الرمز السري يا حنين ✨</p>
+        <div class="glass-card fade-in">
+            <div class="heart-pulse">🖤</div>
+            <h1 class="neon-text">منطقة مخصصة لحنين</h1>
+            <p>اكتبي كلمة السر لفتح عالمنا السري..</p>
             <input type="password" id="password-input" placeholder="0000">
-            <button class="btn-main" onclick="unlockSite()">فتح الخزنة</button>
-            <p id="pass-error" class="error-text"></p>
+            <button class="btn-glow" onclick="unlockExperience()">فتح الخزنة ✨</button>
+            <p id="pass-error" class="error-msg"></p>
         </div>
     </section>
 
-    <main id="story-content" class="hidden-site">
+    <main id="story-content" class="hidden">
         
-        <section class="story-section fade-in">
-            <div class="glass-card">
-                <h2 class="neon-text">بداية الحكاية.. 🌸</h2>
-                <p class="narrative-text">من سنتين، بدأت حكاية مكنتش أعرف إنها هتكون أجمل حاجة في حياتي.. كل يوم بيعدي وأنا معاكي بحس إني ملكت الدنيا.</p>
-            </div>
-        </section>
+        <div class="story-section glass-card">
+            <h2 class="neon-pink">البداية كانت معاكي.. 🌸</h2>
+            <p class="story-text">كل ثانية عدت علينا كانت حكاية، وكل ضحكة منك كانت بتبني جوايا عالم جديد.</p>
+        </div>
 
-        <section class="story-section">
-            <div class="ai-interaction-card glass-card">
-                <div class="ai-badge">يوسف بيكلمك 🧑🏻‍💻</div>
-                <div class="ai-text-box">
-                    <p id="ai-q1"></p>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="ans1" placeholder="ردي هنا..">
-                    <button onclick="checkAI(1)">إرسال</button>
-                </div>
+        <div class="story-section ai-card glass-card">
+            <div class="ai-badge">يوسف بيكلمك 🧑🏻‍💻</div>
+            <div class="ai-chat-box">
+                <p id="ai-text"></p>
             </div>
-        </section>
+            <div class="input-row">
+                <input type="text" id="ans-input" placeholder="ردي هنا.." disabled>
+                <button id="send-btn" onclick="checkAnswer()" disabled>إرسال</button>
+            </div>
+        </div>
 
-        <section id="gallery-section" class="story-section locked">
-            <div class="glass-card">
-                <h2 class="neon-text">لحظات لا تُنسى 📸</h2>
-                <div class="horizontal-scroll">
-                    <img src="https://files.catbox.moe/w2e9j8.jpg" alt="ذكرى 1">
-                    <img src="https://files.catbox.moe/5m9v3d.jpg" alt="ذكرى 2">
-                </div>
-                <p class="sub-text">دي كانت أول مرة نضحك فيها من قلبنا..</p>
+        <div id="gallery-section" class="story-section locked glass-card">
+            <h2 class="neon-pink">لحظاتنا الحلوة 📸</h2>
+            <div class="photo-grid">
+                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=500" class="love-img">
+                <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=500" class="love-img">
             </div>
-        </section>
-
-        <section id="final-section" class="story-section locked">
-            <div class="glass-card">
-                <h2 class="neon-text">كلمة من قلبي.. ❤️</h2>
-                <p class="narrative-text">شكراً إنك في حياتي، وشكراً على كل ثانية بتخليها أحلى. 2026 هتكون سنة العوض لينا يا حنين. ✨</p>
-            </div>
-        </section>
+            <p class="story-text">دي كانت مجرد بداية لأيام أجمل جاية لينا في 2026..</p>
+        </div>
 
     </main>
 
