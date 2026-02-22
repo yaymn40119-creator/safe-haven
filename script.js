@@ -1,69 +1,64 @@
-const CORRECT_PASS = "2026";
+let currentStage = 1;
+let finalVerdictText = "";
 
-function unlockExperience() {
-    let pass = document.getElementById('password-input').value;
-    if (pass === CORRECT_PASS) {
-        document.getElementById('lock-screen').classList.add('hidden');
-        document.getElementById('story-content').classList.remove('hidden');
-        document.getElementById('bg-music').play().catch(()=>{}); // تشغيل المزيكا
-        startStoryAI();
-    } else {
-        document.getElementById('pass-error').innerText = "الباسورد غلط.. ركزي يا حنين 🙂";
-    }
+function nextStage(stageNum) {
+    document.getElementById(`stage-${currentStage}`).classList.replace('active-stage', 'hidden-stage');
+    document.getElementById(`stage-${stageNum}`).classList.replace('hidden-stage', 'active-stage');
+    currentStage = stageNum;
 }
 
-function startStoryAI() {
-    typeLive("ai-text", "سؤالنا الأول يا ستي.. إمتى اتعرفنا على بعض أول مرة؟ فاكرة ولا كالعادة نسيتي؟ 🙂");
-}
-
-async function checkAnswer() {
-    let input = document.getElementById('ans-input');
+async function submitToAI(stageNum, scenario) {
+    let input = document.getElementById(`ans-${stageNum}`);
     let text = input.value.trim();
     if (!text) return;
 
     input.disabled = true;
-    document.getElementById('send-btn').disabled = true;
-    document.getElementById('ai-text').innerText = "بيشوف الهبد بتاعك...";
+    let replyBox = document.getElementById(`ai-reply-${stageNum}`);
+    replyBox.innerText = "سينباي يحلل ردك... 👾";
 
     try {
         const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userAnswer: text, correctAnswer: "سنتين", question: "إمتى اتعرفنا؟" })
+            body: JSON.stringify({ userAnswer: text, scenario: scenario })
         });
         const data = await res.json();
         let reply = data.reply;
 
-        if (reply.includes("[صح]")) {
-            typeLive("ai-text", reply.replace("[صح]", "") + " ✨.. انزلي شوفي الصور اللي فتحتلك!", () => {
-                document.getElementById('gallery-section').classList.remove('locked');
-            });
+        // لو ده آخر سؤال، بنحفظ النتيجة للآخر
+        if (stageNum === 3) {
+             finalVerdictText = reply;
+             typeLive(replyBox, "أوه.. فهمت شخصيتك. تعالي شوفي النتيجة النهائية! ➡️", () => {
+                 setTimeout(() => {
+                     showFinalResult();
+                 }, 2000);
+             });
         } else {
-            typeLive("ai-text", reply, () => { 
-                input.disabled = false; 
-                document.getElementById('send-btn').disabled = false;
-                input.focus();
+            typeLive(replyBox, reply + " (اضغطي عشان تكملي) ➡️", () => {
+                replyBox.onclick = () => nextStage(stageNum + 1);
             });
         }
+
     } catch (e) {
-        typeLive("ai-text", "النت علق للحظة.. قولي تاني؟ 🙂", () => { input.disabled = false; });
+        replyBox.innerText = "حدث خطأ في الاتصال بالخادم.. حاولي مرة أخرى.";
+        input.disabled = false;
     }
 }
 
-function typeLive(id, text, callback) {
-    let el = document.getElementById(id);
-    el.innerText = "";
+function showFinalResult() {
+    nextStage('final');
+    document.getElementById('final-score').innerText = finalVerdictText;
+}
+
+function typeLive(element, text, callback) {
+    element.innerText = "";
     let i = 0;
     function t() {
         if (i < text.length) {
-            el.innerText += text.charAt(i);
+            element.innerText += text.charAt(i);
             i++;
             setTimeout(t, 40);
-        } else {
-            document.getElementById('ans-input').disabled = false;
-            document.getElementById('send-btn').disabled = false;
-            if (callback) callback();
-        }
+        } else if (callback) callback();
     }
     t();
 }
