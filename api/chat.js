@@ -2,8 +2,12 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const apiKey = process.env.GEMINI_API_KEY; 
-    const { message, userName } = req.body;
+    // فحص لو المفتاح مش موجود أصلاً
+    if (!apiKey) {
+        return res.status(200).json({ reply: "⚠️ المفتاح السري لسه مش مقري في Vercel! اتأكد إنك حطيته وعملت Redeploy." });
+    }
 
+    const { message, userName } = req.body;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const payload = {
@@ -20,9 +24,16 @@ export default async function handler(req, res) {
             body: JSON.stringify(payload)
         });
         const data = await response.json();
+        
+        // صايد الأخطاء: لو جوجل رفضت الطلب لأي سبب
+        if (!response.ok) {
+            return res.status(200).json({ reply: `⚠️ جوجل رافضة الطلب وبتقول: ${data.error?.message || "خطأ غير معروف"}` });
+        }
+
         const reply = data.candidates[0].content.parts[0].text;
         res.status(200).json({ reply });
     } catch (error) {
-        res.status(500).json({ reply: "في مشكلة في الاتصال يا " + userName + "، خدي نفس عميق وجربي تاني 🤍" });
+        // لو في مشكلة تانية في الكود
+        res.status(200).json({ reply: `⚠️ الكود ضرب وبيقول: ${error.message}` });
     }
 }
