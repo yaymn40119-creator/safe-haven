@@ -1,77 +1,90 @@
-const ACCESS_CODE = "2026";
-let conversation = [];
+const SENPAI_KEY = "AIzaSyBjjplB8mWZl3y3v9-WUMxjvLmARHYrmA0";
+let chatHistory = [];
 
-function startSystem() {
-    if (document.getElementById('pass-input').value === ACCESS_CODE) {
-        document.getElementById('lock-screen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        wakeUpSenpai();
+function openVault() {
+    if (document.getElementById('pass-key').value === "2026") {
+        document.getElementById('lock-screen').classList.replace('active', 'hidden');
+        document.getElementById('vault-core').classList.add('active');
+        startHearts();
+        initAI();
     } else {
-        document.getElementById('error-msg').innerText = "تم رفض الوصول.. الرمز غير صحيح.";
+        document.getElementById('error-msg').innerText = "الرمز السري خطأ.. حاولي تاني يا شطورة! 🙂";
     }
 }
 
-async function wakeUpSenpai() {
-    typeWriter("أهلاً بكِ في نظام 'السينباي' المتطور.. أنا هنا لأختبر عمق مشاعرك بذكاء. لا تتوقعي أسئلة سهلة، ولا تتوقعي رقة مفرطة. هل نبدأ الاختبار أم ستبكين الآن؟ 👾");
+async function initAI() {
+    typeWriter("أهلاً بيكي في عيادة 'السينباي' الرومانسية.. أنا هنا عشان أشوف لو إنتي فعلاً بتستحقي حب يوسف ولا مجرد تمثال بارد ببيضيع وقته. ردي بذكاء وإلا ههينك! جاهزة؟ 👾");
 }
 
 function handleKey(e) { if(e.key === 'Enter') sendToSenpai(); }
 
 async function sendToSenpai() {
-    const input = document.getElementById('user-input');
+    const input = document.getElementById('user-msg');
     const msg = input.value.trim();
     if (!msg) return;
 
-    input.value = "";
-    input.disabled = true;
-    document.getElementById('ai-text').innerText = "جاري تحليل الرد المتواضع... ⚙️";
+    input.value = ""; input.disabled = true;
+    document.getElementById('ai-output').innerText = "السينباي بيحلل برودك... ⚙️";
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${SENPAI_KEY}`;
+    
+    const payload = {
+        contents: chatHistory.concat({ role: "user", parts: [{ text: msg }] }),
+        systemInstruction: {
+            parts: [{ text: `أنت 'سينباي'، خبير الرومانسية المظلم بلهجة مصرية صايعة جداً. 
+            قواعدك:
+            1. الرد باللهجة العامية المصرية حصراً (لغة شباب 2026).
+            2. لو البنت ردت برد بارد أو بدائي (مثلاً: "هرفضه" أو "مش عارفة"): اتريق عليها وأهينها ببرود (مثال: "يعني ده موقع اختبار رومانسية، حاولي تكوني رومانسية شوية يا تمثال 🙂").
+            3. لو ردها عميق: امدحها بذهول الأنمي واعترف بحب يوسف ليها.
+            4. الأسئلة لا نهائية، أنت من يقرر متى ينتهي الاختبار بناءً على انبهارك.
+            ردك JSON فقط: { "reply": "نص الرد المصري", "isFinished": boolean, "verdict": "لقبها النهائي" }` }]
+        }
+    };
 
     try {
-        const res = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg, history: conversation })
-        });
+        const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
         const data = await res.json();
+        const responseData = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ""));
         
-        conversation.push({ role: "user", text: msg });
-        conversation.push({ role: "model", text: data.reply });
+        chatHistory.push({ role: "user", parts: [{ text: msg }] });
+        chatHistory.push({ role: "model", parts: [{ text: responseData.reply }] });
 
-        if (data.isFinished) {
-            showFinalVerdict(data.reply, data.verdictType);
+        if (responseData.isFinished) {
+            renderFinal(responseData.reply, responseData.verdict);
         } else {
-            typeWriter(data.reply, () => { input.disabled = false; input.focus(); });
+            typeWriter(responseData.reply, () => { input.disabled = false; input.focus(); });
         }
     } catch (e) {
-        typeWriter("حدث خطأ في مصفوفة البيانات.. حاولي مجدداً.");
+        typeWriter("فشل الاتصال بعقلي.. حاولي مجدداً يا 'باكا'! 🙂");
         input.disabled = false;
     }
 }
 
 function typeWriter(text, callback) {
-    let el = document.getElementById('ai-text');
-    el.innerText = "";
-    let i = 0;
+    let el = document.getElementById('ai-output');
+    el.innerText = ""; let i = 0;
     function t() {
-        if (i < text.length) {
-            el.innerText += text.charAt(i);
-            i++;
-            setTimeout(t, 35);
-        } else if (callback) callback();
+        if (i < text.length) { el.innerText += text.charAt(i); i++; setTimeout(t, 35); }
+        else if (callback) callback();
     }
     t();
 }
 
-function showFinalVerdict(text, type) {
-    document.getElementById('ai-text').innerText = text;
-    document.getElementById('final-verdict').classList.remove('hidden');
-    document.getElementById('result-title').innerText = `اللقب النهائي: ${type}`;
-    
-    // صورة ميمز أنمي بناءً على اللقب
-    const isBaka = type.includes("باكا") || type.includes("يائسة");
-    document.getElementById('result-img').src = isBaka 
-        ? "https://media.giphy.com/media/UQP2h8Q7g37hI1J5yP/giphy.gif" 
-        : "https://media.giphy.com/media/L95W4wv8nnb9K/giphy.gif";
-        
-    document.querySelector('.control-center').style.display = 'none';
+function startHearts() {
+    const rain = document.getElementById('heart-rain');
+    setInterval(() => {
+        const h = document.createElement('div');
+        h.className = 'heart'; h.innerHTML = '❤️';
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.animationDuration = Math.random() * 3 + 2 + 's';
+        rain.appendChild(h);
+        setTimeout(() => h.remove(), 5000);
+    }, 300);
+}
+
+function renderFinal(text, verdict) {
+    document.getElementById('ai-output').innerText = text;
+    document.getElementById('memories-grid').classList.remove('hidden');
+    alert(`التقييم النهائي: ${verdict}`);
+    document.querySelector('.control-panel').style.display = 'none';
 }
