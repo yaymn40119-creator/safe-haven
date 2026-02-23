@@ -3,49 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Infinite Senpai 🌊</title>
+    <title>خزنة حبنا الأبدية 💖</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="liquid-bg">
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-    </div>
+    <div class="liquid-bg"></div>
+    <div class="heart-rain" id="heart-rain"></div>
 
-    <main class="main-wrapper">
-        <section id="lock-screen" class="glass-morph active-screen">
-            <div class="cyber-icon">🔐</div>
-            <h1 class="glitch-text">AUTHENTICATION</h1>
-            <p>أدخل شفرة الولوج لعالم السينباي..</p>
-            <div class="input-glow-wrapper">
-                <input type="password" id="pass-input" placeholder="••••">
+    <main class="master-container">
+        <section id="lock-screen" class="glass-morph active">
+            <div class="main-heart">❤️</div>
+            <h1 class="neon-text">منطقة محميّة بالحب</h1>
+            <p>أدخلي شفرة الولوج لقلبي..</p>
+            <div class="input-wrapper">
+                <input type="password" id="pass-key" placeholder="••••">
             </div>
-            <button class="btn-liquid" onclick="startSystem()">دخول النظام ⚡</button>
+            <button class="btn-love" onclick="openVault()">فتح الخزنة ✨</button>
             <p id="error-msg" class="error-glow"></p>
         </section>
 
-        <section id="app" class="hidden">
-            <div class="header-nav">
-                <div class="system-tag">STATUS: <span class="online">ACTIVE</span></div>
-                <div class="senpai-label">👾 SENPAI_CORE_V5</div>
+        <section id="vault-core" class="glass-morph hidden">
+            <div class="header-status">
+                <span class="pulse-heart">❤️</span> متصل بقلب يوسف
             </div>
-
-            <div class="display-box glass-morph">
-                <div class="text-container">
-                    <p id="ai-text" class="live-flow-text"></p>
-                    <div id="final-verdict" class="hidden">
-                        <img id="result-img" src="" alt="Result">
-                        <h2 id="result-title"></h2>
+            
+            <div class="display-area">
+                <p id="ai-output" class="mega-text-flow"></p>
+                
+                <div id="memories-grid" class="hidden">
+                    <div class="memory-card">
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=500" alt="ذكرى">
+                        <p>أجمل بداية كانت معاكي..</p>
                     </div>
                 </div>
             </div>
 
-            <div class="control-center glass-morph">
+            <div class="control-panel">
                 <div class="input-row">
-                    <input type="text" id="user-input" placeholder="اكتبي ردك هنا، وريني شطارتك..." onkeypress="handleKey(event)">
-                    <button class="send-btn" onclick="sendToSenpai()">إرسال 📩</button>
+                    <input type="text" id="user-msg" placeholder="اكتبي اللي في قلبك هنا..." onkeypress="handleKey(event)">
+                    <button class="btn-send" onclick="sendToSenpai()">إرسال 💌</button>
                 </div>
             </div>
         </section>
